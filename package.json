@@ -8,8 +8,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "setup": "bundle install && yarn install",
-    "build": "rm -rf build && bundle exec middleman build",
-    "deploy": "rm -rf build && bundle exec middleman deploy",
+    "build": "./setup-build.sh && bundle exec middleman build",
+    "deploy": "./setup-build.sh && bundle exec middleman build && ./deploy.sh",
     "serve": "bundle exec middleman serve"
   }
 }
