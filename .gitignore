@@ -16,3 +16,15 @@
 
 # Ignore .DS_store file
 .DS_Store
+
+# Ignore yarn log
+yarn-error.log
+
+# Ignore yarn.lock
+yarn.lock
+
+# Ignore node_modules
+/node_modules
+
+# Ignore dist
+dist/

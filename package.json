@@ -1,0 +1,9 @@
+{
+  "name": "zeam-web",
+  "version": "1.0.0",
+  "description": "Website of ZEAM",
+  "main": "index.js",
+  "repository": "git@github.com:zeam-vm/zeam-web.git",
+  "author": "Susumu Yamazaki <zacky1972@gmail.com>",
+  "license": "Apache 2.0"
+}
