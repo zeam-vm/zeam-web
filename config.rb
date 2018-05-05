@@ -41,4 +41,11 @@ configure :build do
 
   # Minify Javascript on build
   # activate :minify_javascript
+
+  activate :iepab, {
+    name: :gulpPost,
+    command: "gulp post",
+    source: "./build",
+    latency: 1
+  }
 end
