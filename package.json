@@ -5,5 +5,11 @@
   "main": "index.js",
   "repository": "git@github.com:zeam-vm/zeam-web.git",
   "author": "Susumu Yamazaki <zacky1972@gmail.com>",
-  "license": "Apache 2.0"
+  "license": "Apache-2.0",
+  "scripts": {
+    "setup": "bundle install && yarn install",
+    "build": "rm -rf build && bundle exec middleman build",
+    "deploy": "rm -rf build && bundle exec middleman deploy",
+    "serve": "bundle exec middleman serve"
+  }
 }
