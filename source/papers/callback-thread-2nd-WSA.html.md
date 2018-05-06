@@ -81,6 +81,22 @@ sleep.sleep(1000)
 
 Zackernel\[2\]\[3\]は，C++11以降で採用された匿名関数を用い，Node.js\[1\]同様の機構を実装している。
 
+Zackernelのサンプルプログラムを下記に示す。`digitalWrite(LED1, HIGH);`はLED1を点灯し，`digitalWrite(LED1, LOW);`はLED1を消灯する。`sleep`メソッドは，`TIC`ミリ秒の間休止した後，第2引数で与えられた関数を呼び出す。`[&] {} `はC++11で導入された匿名関数の表記である。`zLoop`メソッドは，第1引数で与えられた関数を繰り返し呼び出す。したがってこのプログラムは全体として，LED1をTICミリ秒間隔で繰り返し点滅するプログラムである。
+
+```cpp
+void blinkLed1() {
+  zLoop([&] {
+    digitalWrite(LED1, HIGH);
+    sleep(TIC, [&] {
+       digitalWrite(LED1, LOW);
+       sleep(TIC, [&] {});
+    });
+  });
+}
+```
+
+Zackernelの内部構成について説明する。Zackernel の`Schedule`クラスはコールバックする関数を保持し，`Schedule`同士を線形リスト構造でつないでいる。Zackernelの`Zackernel`クラスは`Schedule`のキューを保持する。核心となる`dispatch`メソッドは，次に呼び出すべき関数をキューから読み込んで呼び出す。スタックオーバーフローにならないように再帰呼び出しを抑制しながら次々とコールバックを呼び出すように設計・実装した。
+
 
 ## 3. Elixirでの軽量コールバックスレッドの実装方針
 
