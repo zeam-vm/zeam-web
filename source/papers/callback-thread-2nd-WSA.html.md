@@ -86,6 +86,36 @@ Zackernel\[2\]\[3\]は，C++11以降で採用された匿名関数を用い，No
 
 ## 4. 従来マルチタスク機構との統合
 
+Elixirの実行環境であるErlang VMでは，従来マルチタスク機構としてスレッド(軽量プロセス)を提供している。Erlang VMのスレッドそれぞれにGCを含むメモリ管理機構が独立して備わっている。そのため，スレッドの実行に不具合があった場合，スレッドを再起動しても他に影響がない。Elixirではこの特性を生かして高い耐障害性を実現している。
+
+SMP環境の場合の Erlang VM のスレッド構成を表1に示す\[9\]。
+
+表1: SMP環境での Erlang VM のスレッド構成
+
+|スレッド名                     |関数名                           |個数     |
+|:-----------------------------|:-------------------------------|--------:|
+|Main Thread                   |erts\_sys_main_thread           |        1|
+|Signal Handling Thread        |signal\_dispatcher\_thread\_func|        1|
+|System Message Handling Thread|sys\_msg\_dispatcher\_func      |        1|
+|Async Thread                  |async\_main                     |       10|
+|Child Waiting Thread          |child\_waiter                   |        1|
+|Scheduling Thread             |sched\_thread\_func             |論理コア数|
+|Aux Thread                    |aux\_thread                     |        1|
+
+それぞれの役割は次の通りである\[9\]:
+
+* Main Thread: シグナルを受信して，Singal Handling Thread に通知する。
+* Signal Handling Thread: シグナルハンドラ本体である。Main Threadが受信したシグナルに相当するハンドラを起動する。`erl`起動時の `'+B'` オプションでシグナル受信の挙動を変更できる。
+* System Message Handling Thread: システムメッセージのハンドラである。システムメッセージは、トレース情報の出力やプロセスの再開・中断等をリクエストする特殊なメッセージである。詳細は文献\[10\]を参照のこと。
+* Async Thread: Erlang プロセスによるファイル操作を非同期に行う。プロセスが file モジュールを通じてファイルの読み書きや開閉を行うと，Scheduling Threadに代わってAsync Threadがそれらの処理を請け負う。Async Thread はバイトコードを解釈実行するScheduling Thread の動作を止めないために，処理を肩代わりする。スレッドの起床は `futex()`システムコールで行う。Async Thread の個数は `erl` 起動時に `'+A'` オプションで変更できる。例えば、`'erl +A 5'` とすると、Async Thread は5個になる。
+* Child Waiting Thread: 子スレッドの終了を `waitpid()`で待ち受ける。
+* Scheduling Thread: `process_main()` を実行し、 バイトコード解釈実行とプロセススケジューリングを行う。デフォルトでは論理コアと同じ数だけ生成される。`'+S'` オプションでスレッド数を調整できる。他の Scheduling Thread と比較して負荷が偏らないようにバランシングとプロセスマイグレーションを行う。
+* Aux Thread: 若干時間のかかる処理を受け持つ補助的なスレッドである。メモリアロケーションやGCの情報を取得する際等に，Scheduling Thread から処理をオフロードされる。例えば、`'elrang:statistics(garbage_collection)'` でのGC統計情報取得は，`aux_thread`で行う。
+
+他にNIF(Native Implemented Functions)や`driver`関係のスレッドを起動することがある。
+
+このように，システムの実行を司る Scheduling Thread と，I/Oを司る Async Thread が独立して存在することもElixirの特徴である。このため，マルチコア環境下でもI/Oに関して排他制御をする必要性がほとんど生じなくなる。これが高い並列処理性能に繋がる。
+
 ## 5. 軽量コールバックスレッドとメモリ管理の関係
 
 Elixirの従来マルチタスク機構の特徴は，軽量プロセスごとにGCなどのメモリ管理が独立している点である。これにより，軽量プロセスに不具合が生じた時に再起動してメモリごと再初期化することが可能になる。
@@ -125,3 +155,5 @@ Elixirの従来マルチタスク機構の特徴は，軽量プロセスごと�
 * \[6\] DockYard, Phoenix, available at http://phoenixframework.org
 * \[7\] Apache Software Foundation, Apache, available at http://www.apache.org
 * \[8\] Kamil Myśliwiec, Sleep-Async, available at https://www.npmjs.com/package/sleep-async
+* \[9\] Eiichi Tsukata, Erlang VM(BEAM) スレッド構成, available at http://blog.etsukata.com/2014/02/erlang-vmbeam.html
+* \[10\] Ericsson AB, manual of sys module, available at http://erlang.org/doc/man/sys.html
