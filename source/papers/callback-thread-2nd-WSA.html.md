@@ -13,6 +13,20 @@ Node.js では，コールバックを用いてI/Oを非同期的に扱って擬
 
 今後，我々はElixirに軽量コールバックスレッドのプロトタイプを実装し，性能を評価して前述の提案の実現可能性について検討する。
 
+## はじめに
+
+## Zackernel
+
+## Elixirでの軽量コールバックスレッドの実装方針
+
+## 従来マルチタスク機構との統合
+
+## 軽量コールバックスレッドとメモリ管理の関係
+
+## Phoenixにおける軽量コールバックスレッドの活用方針
+
+## おわりに
+
 ## 参考文献
 
 * [1]  Stefan Tilkov and Steve Vinoski, Node.js: Using JavaScript to Build High-Performance Network Programs, IEEE Internet Computing, Volume: 14, Issue: 6, Nov.-Dec. 2010.
