@@ -7,27 +7,96 @@ title: "Elixirの軽量コールバックスレッドとPhoenixの同時セッ�
 # Plan to Implementation of Lightweight Callback Thread for Elixir and Improvement of Maximum Concurrent Sessions and Latency of Phoenix
 ## Susumu Yamazaki (University of Kitakyushu)
 
-Node.js では，コールバックを用いてI/Oを非同期的に扱って擬似的にマルチタスクにする機構が備わっている[1]。我々はC++で同様の機構を実装し，Zackernelとして公開した[2]。このような仕組みにより，ウェブサーバーがリクエストを受け付ける際に消費するメモリ量を大幅に削減でき，その結果，同時セッション最大数とレイテンシが改善される。そこで，我々はElixirにこのような仕組み，**軽量コールバックスレッド(lightweight callback thread)**を実装することを着想した。これによりElixirベースのウェブサーバープラットフォームであるPhoenixの同時セッション最大数とレイテンシが改善されることを期待している。
+Node.js\[1\]では，コールバックを用いてI/Oを非同期的に扱って擬似的にマルチタスクにする機構が備わっている\[2\]。我々はC++で同様の機構を実装し，Zackernel(ザッカーネル)として公開した\[3\]\[4\]。このような仕組みにより，ウェブサーバーがリクエストを受け付ける際に消費するメモリ量を大幅に削減でき，その結果，同時セッション最大数とレイテンシが改善される。そこで，我々はElixir\[5\]にこのような仕組み，**軽量コールバックスレッド(lightweight callback thread)**を実装することを着想した。これによりElixirベースのウェブサーバープラットフォームであるPhoenix\[6\]の同時セッション最大数とレイテンシが改善されることを期待している。
 
-本発表では，先行して開発したZackernel(ザッカーネル)の実装について紹介し，Elixirで軽量コールバックスレッドを実装する方針を提案する。次に軽量コールバックスレッドを，従来のマルチタスクの機構であるスケジューラスレッドと非同期スレッドプールとどのように統合していくか，メモリ管理機構との関係をどのように位置づけるかについての方針を提案する。さらにPhoenixで軽量コールバックスレッドをどのように活用するかの方針についても提案する。
+本発表では，先行して開発したZackernelの実装について紹介し，Elixirで軽量コールバックスレッドを実装する方針を提案する。次に軽量コールバックスレッドを，従来のマルチタスクの機構であるスケジューラスレッドと非同期スレッドプールとどのように統合していくか，メモリ管理機構との関係をどのように位置づけるかについての方針を提案する。さらにPhoenixで軽量コールバックスレッドをどのように活用するかの方針についても提案する。
 
 今後，我々はElixirに軽量コールバックスレッドのプロトタイプを実装し，性能を評価して前述の提案の実現可能性について検討する。
 
-## はじめに
+## 1. はじめに
 
-## Zackernel
+Apache\[7\]などの現状のウェブサーバーでは，図1に示すようにスレッドやプロセス，軽量プロセスなどを用いて同時に接続要求された複数のセッションを処理している。この方式ではセッションごとに数10MB程度のスタックメモリを消費するため，セッション数が極端に多くなると実メモリが不足してパフォーマンスが悪化し，その結果，同時セッション最大数が大きく制約され，レイテンシが悪化する。
 
-## Elixirでの軽量コールバックスレッドの実装方針
+![従来のマルチスレッド/マルチプロセス方式](../images/Zackernel-1.jpg)
 
-## 従来マルチタスク機構との統合
+図1: 従来のマルチスレッド/マルチプロセス方式
 
-## 軽量コールバックスレッドとメモリ管理の関係
+そこで，Node.js\[1\]では，コールバックを用いてI/Oを非同期的に扱って擬似的にマルチタスクにする機構が備わっている\[2\]。これによりNode.jsでは図2に示すように，1つのスレッドで複数のセッションを処理することができる。この結果，同時セッションが増えてもスタックメモリを消費せず，1つのセッションあたり数〜数百KB程度のタスク管理ブロック(TCB)を必要とする程度で済むため，セッション数が相当多くなっても耐えられるシステムを構築することができる。
 
-## Phoenixにおける軽量コールバックスレッドの活用方針
+![Node.jsのコールバック方式](../images/Zackernel-2.jpg)
 
-## おわりに
+図2: Node.jsのコールバック方式
+
+Node.jsを記述しているプログラミング言語Javascriptでは，匿名関数を利用できる。Node.jsを用いると次のように匿名関数を用いて非同期I/Oの処理を記述することができる。なお，このコード例では Sleep-Async \[8\]を用いた。`sleep.sleep(1000)`で1000ミリ秒間スリープし，その後，`.then()`の中に記述された匿名関数を呼び出している。
+
+```javascript
+const sleep = require('sleep-async')().Promise;
+
+const startTime = new Date().getTime();
+console.log('startTime: ' + startTime);
+
+sleep.sleep(1000)
+  .then(() => new Date().getTime())
+  .then(stopTime => {
+  	console.log('stopTime: ' + stopTime);
+  	console.log('Difference: '+((stopTime-startTime)/1000)+' [s]');
+  });
+```
+
+我々は同様の機構を2016年にZackernelとしてC++に実装した\[3\]\[4\]。Zackernelで狙った領域は，RFIDのような極端に小規模で消費電力の少ないIoT用途である。
+
+そこで我々はZackernelで得た経験を踏まえ，極端に大きな同時セッション接続数と高いレスポンス性能を要求されるクラウドサーバー用途として，このような用途に向くElixir\[5\]ベースで開発されたPhoenix\[6\]に同様の機構を適用できないかを検討する。
+
+### 1.1 本発表の目的
+
+本発表の目的は次の通りである。
+
+* ElixirでNode.jsやZackernel同様のコールバックを用いた機構，**軽量コールバックスレッド**を実装する方針を検討する
+* Phoenixで軽量コールバックスレッドをどのように活用するかについて検討する
+
+### 1.2 本発表のアプローチ
+
+本発表の目的を達成するために次のようなアプローチで研究を行う。
+
+1. Zackernelの実装についてふりかえる
+2. Elixirで軽量コールバックスレッドを実装する方針を提案する
+3. 軽量コールバックスレッドを，従来のマルチタスクの機構であるスケジューラスレッドと非同期スレッドプールとどのように統合するか方針を提案する
+4. 軽量コールバックスレッドとメモリ管理機構との関係の位置付けの方針を提案する
+5. 3,4を踏まえ，Phoenixで軽量コールバックスレッドをどのように活用するかの方針について提案する
+
+### 1.3 この後の本発表の構成
+
+この後，本発表を次のように構成する:
+
+* 第2章でZackernelについてふりかえる。
+* 第3章でElixirでの軽量コールバックスレッドの実装方針を提案する。
+* 第4章でElixirの従来マルチタスク機構であるスケジューラスレッドと非同期スレッドプールとどのように統合するかの方針を提案する。
+* 第5章で軽量コールバックスレッドとメモリ管理機構との関係の位置付けの方針を提案する。
+* 第6章でPhoenixで軽量コールバックスレッドをどのように活用するかの方針について提案する
+* 第7章で本発表をまとめ，将来課題について述べる。
+
+## 2. Zackernel
+
+Zackernel\[2\]\[3\]は，C++11以降で採用された匿名関数を用い，Node.js\[1\]同様の機構を実装している。
+
+
+## 3. Elixirでの軽量コールバックスレッドの実装方針
+
+## 4. 従来マルチタスク機構との統合
+
+## 5. 軽量コールバックスレッドとメモリ管理の関係
+
+## 6. Phoenixにおける軽量コールバックスレッドの活用方針
+
+## 7. おわりに
 
 ## 参考文献
 
-* [1]  Stefan Tilkov and Steve Vinoski, Node.js: Using JavaScript to Build High-Performance Network Programs, IEEE Internet Computing, Volume: 14, Issue: 6, Nov.-Dec. 2010.
-* [2] Susumu Yamazaki, Zackernel: an Engine for IoT, Sep. 2016. available at https://github.com/zackernel/zackernel
+* \[1\] Linux Foundation, Node.js, https://nodejs.org/en/
+* \[2\]  Stefan Tilkov and Steve Vinoski, Node.js: Using JavaScript to Build High-Performance Network Programs, IEEE Internet Computing, Volume: 14, Issue: 6, Nov.-Dec. 2010.
+* \[3\] Susumu Yamazaki, Zackernel: an Engine for IoT, Sep. 2016. available at https://github.com/zackernel/zackernel
+* \[4\] 山崎 進, Zackernelが拓く新しいIoTの世界, available at https://zacky1972.github.io/blog/2016/12/04/zackernel.html
+* \[5\] Plataformatec, Elixir, available at https://elixir-lang.org
+* \[6\] DockYard, Phoenix, available at http://phoenixframework.org
+* \[7\] Apache Software Foundation, Apache, available at http://www.apache.org
+* \[8\] Kamil Myśliwiec, Sleep-Async, available at https://www.npmjs.com/package/sleep-async
