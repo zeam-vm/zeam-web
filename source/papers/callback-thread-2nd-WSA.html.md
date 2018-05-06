@@ -3,6 +3,8 @@ title: "Elixirの軽量コールバックスレッドとPhoenixの同時セッ�
 ---
 # Elixirの軽量コールバックスレッドの実装とPhoenixの同時セッション最大数・レイテンシ改善の構想
 ## 北九州市立大学 山崎 進
+## デライトシステムズ 森 正和，上野 嘉大
+## 京都大学 高瀬 英希
 
 # Plan to Implementation of Lightweight Callback Thread for Elixir and Improvement of Maximum Concurrent Sessions and Latency of Phoenix
 ## Susumu Yamazaki (University of Kitakyushu)
