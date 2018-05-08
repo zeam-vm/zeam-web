@@ -129,7 +129,7 @@ SMP環境の場合の Erlang VM のスレッド構成を表1に示す\[9\]。
 それぞれの役割は次の通りである\[9\]:
 
 * Main Thread: シグナルを受信して，Singal Handling Thread に通知する。
-* Signal Handling Thread: シグナルハンドラ本体である。Main Threadが受信したシグナルに相当するハンドラを起動する。`erl`起動時の `'+B'` オプションでシグナル受信の挙動を変更できる。
+* Signal Handling Thread: シグナルハンドラ本体である。Main Threadが受信したシグナルに相当するハンドラを起動する。Erlangのコマンド `erl` 起動時の `'+B'` オプションでシグナル受信の挙動を変更できる。
 * System Message Handling Thread: システムメッセージのハンドラである。システムメッセージは、トレース情報の出力やプロセスの再開・中断等をリクエストする特殊なメッセージである。詳細は文献\[10\]を参照のこと。
 * Async Thread: Erlang プロセスによるファイル操作を非同期に行う。プロセスが file モジュールを通じてファイルの読み書きや開閉を行うと，Scheduling Threadに代わってAsync Threadがそれらの処理を請け負う。Async Thread はバイトコードを解釈実行するScheduling Thread の動作を止めないために，処理を肩代わりする。スレッドの起床は `futex()`システムコールで行う。Async Thread の個数は `erl` 起動時に `'+A'` オプションで変更できる。例えば、`'erl +A 5'` とすると、Async Thread は5個になる。
 * Child Waiting Thread: 子スレッドの終了を `waitpid()`で待ち受ける。
