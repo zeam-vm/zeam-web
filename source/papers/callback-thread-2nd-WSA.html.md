@@ -116,7 +116,7 @@ SMP環境の場合の Erlang VM のスレッド構成を表1に示す\[9\]。
 
 表1: SMP環境での Erlang VM のスレッド構成
 
-|スレッド名                     |関数名                           |個数     |
+|スレッド名                      |関数名                           |個数     |
 |:-----------------------------|:-------------------------------|--------:|
 |Main Thread                   |erts\_sys_main_thread           |        1|
 |Signal Handling Thread        |signal\_dispatcher\_thread\_func|        1|
@@ -130,17 +130,18 @@ SMP環境の場合の Erlang VM のスレッド構成を表1に示す\[9\]。
 
 * Main Thread: シグナルを受信して，Singal Handling Thread に通知する。
 * Signal Handling Thread: シグナルハンドラ本体である。Main Threadが受信したシグナルに相当するハンドラを起動する。Erlangのコマンド `erl` 起動時の `'+B'` オプションでシグナル受信の挙動を変更できる。
-* System Message Handling Thread: システムメッセージのハンドラである。システムメッセージは、トレース情報の出力やプロセスの再開・中断等をリクエストする特殊なメッセージである。詳細は文献\[10\]を参照のこと。
+* System Message Handling Thread: システムメッセージのハンドラである。システムメッセージは，トレース情報の出力やプロセスの再開・中断等をリクエストする特殊なメッセージである。詳細は文献\[10\]を参照のこと。
 * Async Thread: Erlang プロセスによるファイル操作を非同期に行う。プロセスが file モジュールを通じてファイルの読み書きや開閉を行うと，Scheduling Threadに代わってAsync Threadがそれらの処理を請け負う。Async Thread はバイトコードを解釈実行するScheduling Thread の動作を止めないために，処理を肩代わりする。スレッドの起床は `futex()`システムコールで行う。Async Thread の個数は `erl` 起動時に `'+A'` オプションで変更できる。例えば、`'erl +A 5'` とすると、Async Thread は5個になる。
 * Child Waiting Thread: 子スレッドの終了を `waitpid()`で待ち受ける。
-* Scheduling Thread: `process_main()` を実行し、 バイトコード解釈実行とプロセススケジューリングを行う。デフォルトでは論理コアと同じ数だけ生成される。`'+S'` オプションでスレッド数を調整できる。他の Scheduling Thread と比較して負荷が偏らないようにバランシングとプロセスマイグレーションを行う。
+* Scheduling Thread: `process_main()` を実行し，バイトコード解釈実行とプロセススケジューリングを行う。デフォルトでは論理コアと同じ数だけ生成される。`'+S'` オプションでスレッド数を調整できる。他の Scheduling Thread と比較して負荷が偏らないようにバランシングとプロセスマイグレーションを行う。
 * Aux Thread: 若干時間のかかる処理を受け持つ補助的なスレッドである。メモリアロケーションやGCの情報を取得する際等に，Scheduling Thread から処理をオフロードされる。例えば、`'elrang:statistics(garbage_collection)'` でのGC統計情報取得は，`aux_thread`で行う。
 
 他にNIF(Native Implemented Functions)や`driver`関係のスレッドを起動することがある。
 
-このように，システムの実行を司る Scheduling Thread と，I/Oを司る Async Thread が独立して存在することもElixirの特徴である。このため，マルチコア環境下でもI/Oに関して排他制御をする必要性がほとんど生じなくなる。
+このように，システムの実行を司る Scheduling Thread と，I/Oを司る Async Thread が独立して存在することもElixirの特徴である。I/O処理をしたい時には Scheduling Thread からプロセス間通信で Async Thread に処理を委ね，1つのI/O処理は1つの Async Thread が独占的に行う。このため，マルチコア環境下でもI/Oに関して排他制御をする必要性がほとんど生じなくなる。
 
-これを踏まえて，軽量コールバックスレッドは従来の軽量スレッドをさらに細分するように実現する。軽量コールバックスレッドの実現に欠かせない非同期I/O処理は，Async Threadとの非同期通信で実現する。
+これを踏まえて，軽量コールバックスレッドは従来の軽量スレッドの Scheduling Thread をさらに細分するように実現する。軽量コールバックスレッドの実現に欠かせない非同期I/O処理は，Async Threadとの非同期通信で実現する。このことから，従来のプロセス間通信だけでなく，軽量コールバックスレッド同士の通信の仕組みが必要となる
+
 
 ## 5. 軽量コールバックスレッドとメモリ管理の関係
 
