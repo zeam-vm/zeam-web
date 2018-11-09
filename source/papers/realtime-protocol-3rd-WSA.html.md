@@ -72,18 +72,37 @@ OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関
 * 同期処理による遅延
 * DDOS攻撃攻撃
 
-## 3. パケット損失
+## 3. パケット・ロス
 
-これらの要因の多くはパケット損失に起因すると考えた。パケット損失の主な原因は次のとおりだと認識している。
+これらの要因の多くはパケット・ロス(packet loss)に起因すると考えた。Bhadra ら\[1\]によるとパケット・ロスの主な原因は次のとおりである。
 
-* パケットの輻輳
-* 自然もしくは人為的な干渉
-* システムノイズ
-* ハードウェア障害
-* ソフトウェア破損
-* ルータによる経路制御(攻撃への対処などの一時的な措置による)
+* 自然に起こる受信障害もしくは人為的な妨害(natural or human-made interference)
+	* パケット・ドロップ(packet dropping): ルーターがパケットを受け取ったにも関わらず，ルーターが過負荷である，もしくはルーターが DoS 攻撃を受けていると認識したなどの理由で，次のホップ先にパケットを送らないと決めた場合に起こる
+		* ネットワーク輻輳(network congestion)
+* システムノイズ(system noise)
+* ハードウェア障害(hardware fault)
+* ソフトウェア欠陥・障害によるデータ破損(software corruption)
 
+Bhadra ら\[1\]はサーベイの結果，パケット・ロス確率(PLP)のパラメータの効果を次のようにまとめた。
 
+1. 遅延(delay): 遅延が増加するとPLPは減少する。ただし，PLPは遅延したパケットの到着とは独立であるものとする。5,6
+2. ルーター負荷(router load): ルーター負荷が増加するとPLPは増加する。7
+3. パケット長(packet length): サブスクライバ(subscriber)???が増加するとPLPが増加するのに対し，パケット長が増加するとPLPは減少する。8
+4. Hurst パラメータ(Hurst parameter)???: Hurst パラメータが増加するとPLPが増加する。フラクタル開始時間(Fractal onset time)???はPLPを減少させる。タイムスケール(time scale)???はPLPを減少させる。9
+5. バッファ・サイズ(buffer size): バッファサイズの増加によってPLPは減少する。10
+6. スループット(throughput): スループットによってPLPは増加する。11,12
+7. リファレンス・レシーバ(reference receiver)???: リファレンス・レシーバが中央にあるとPLPが増加し，隅にあるとPLPは減少する。13
+8. マージン(margin): PLPの値はマージンの値に依存する。マージンが増加したときにPLPはわずかに変化する。14
+9. トラフィック負荷(traffic load): トラフィック負荷が増加するとPLPは増加する。15
+10. 冗長性(redundancy): 冗長性を加えることでメッセージのパケット・ロスが減少する。18
+11. 遅延ジッタ(delay jitter): 同時に他のノードが通信していないときにパケットが通信されて成功するときにPLPは減少する。19
+12. 電波領域(radio range): 20
+13. チャネル・パケット・ドロップ率(channel packet drop rate): チャネル・パケット・ドロップ率が増加するとPLPは増加する。21
+14. フィールド・サイズ(field size): フィールド・サイズが増加するとPLPは減少する。22
+15. 閾値(threshold): 出力波長の欠如によってPLPは増加する??? 19,23
+16. 出力限界(power limit): 受信出力限界が増加するとPLPは減少する。24
+17. 波長(wave length): 波長変換器の回数が増加するとPLPは減少する??? 25
+18. 親ピアの数(number of parent peers)???: 親ピアが子ピアを適切に選択することによってPLPは減少する。26
 
 ## まとめと将来課題
 
@@ -92,3 +111,7 @@ OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関
 本研究の一部は，JST未来社会創造事業 JPMJMI17B4 の支援を受けた。
 
 研究遂行にあたり多くの助言をいただいた北九州工業高等専門学校の滝本 隆先生，北九州市立大学の古閑 宏幸先生，佐藤 敬先生に感謝する。
+
+## 参考文献
+
+* \[1\] D. R. Bhadra, C. A. Joshi, P. R. Soni, N. P. Vyas and R. H. Jhaveri, "Packet loss probability in wireless networks: A survey," 2015 International Conference on Communications and Signal Processing (ICCSP), Melmaruvathur, 2015, pp. 1348-1354, doi: 10.1109/ICCSP.2015.7322729, URL: [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423)
