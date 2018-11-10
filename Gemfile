@@ -17,4 +17,3 @@ gem 'middleman-livereload'
 gem 'middleman-iepab'
 gem 'redcarpet'
 gem 'nokogiri'
-
