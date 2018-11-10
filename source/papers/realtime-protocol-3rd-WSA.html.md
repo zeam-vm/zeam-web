@@ -14,7 +14,7 @@ HTTP/TCP/IPによるプロトコルスタックでのネットワーク通信は
 
 ## 2. 各プロトコルスタックにおけるリアルタイム性を阻害する要因
 
-OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関係を図1に示す。
+OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関係を図1\[1\]に示す。
 
 | レベル   | 層             | プロトコル | 概要 | 
 |--------:|:--------------|:---------|:-----|
@@ -74,7 +74,7 @@ OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関
 
 ## 3. パケット・ロス
 
-これらの要因の多くはパケット・ロス(packet loss)に起因すると考えた。Bhadra ら\[1\]によるとパケット・ロスの主な原因は次のとおりである。
+これらの要因の多くはパケット・ロス(packet loss)に起因すると考えた。Bhadra ら\[2\]によるとパケット・ロスの主な原因は次のとおりである。
 
 * 自然に起こる受信障害もしくは人為的な妨害(natural or human-made interference)
 	* パケット・ドロップ(packet dropping): ルーターがパケットを受け取ったにも関わらず，ルーターが過負荷である，もしくはルーターが DoS 攻撃を受けていると認識したなどの理由で，次のホップ先にパケットを送らないと決めた場合に起こる
@@ -83,7 +83,7 @@ OSI参照モデルとHTTP/TCP/IPを中心とした各プロトコルの対応関
 * ハードウェア障害(hardware fault)
 * ソフトウェア欠陥・障害によるデータ破損(software corruption)
 
-Bhadra ら\[1\]はサーベイの結果，パケット・ロス確率(PLP)に影響を与えるパラメータの効果を次のようにまとめた。
+Bhadra ら\[2\]はサーベイの結果，パケット・ロス確率(PLP)に影響を与えるパラメータの効果を次のようにまとめた。
 
 1. 遅延(delay): 遅延が増加するとPLPは減少する。ただし，PLPは遅延したパケットの到着とは独立であるものとする。5,6
 2. ルーター負荷(router load): ルーター負荷が増加するとPLPは増加する。7
@@ -104,7 +104,7 @@ Bhadra ら\[1\]はサーベイの結果，パケット・ロス確率(PLP)に影
 17. 波長(wave length): 波長変換器の回数が増加するとPLPは減少する??? 25
 18. 親ピアの数(number of parent peers)???: 親ピアが子ピアを適切に選択することによってPLPは減少する。26
 
-また，Bhadra ら\[1\]が調べた論文それぞれが論じているPLPに影響を与えるパラメータとその効果は表1のとおりである。
+また，Bhadra ら\[2\]が調べた論文それぞれが論じているPLPに影響を与えるパラメータとその効果は表1のとおりである。
 
 表1: PLPに影響を与えるパラメータとその効果についての論文
 
@@ -131,4 +131,5 @@ Bhadra ら\[1\]はサーベイの結果，パケット・ロス確率(PLP)に影
 
 ## 参考文献
 
-* \[1\] D. R. Bhadra, C. A. Joshi, P. R. Soni, N. P. Vyas and R. H. Jhaveri, "Packet loss probability in wireless networks: A survey," 2015 International Conference on Communications and Signal Processing (ICCSP), Melmaruvathur, 2015, pp. 1348-1354, doi: 10.1109/ICCSP.2015.7322729, URL: [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423)
+* \[1\] マスタリングTCP/IP 入門編 第5版　- 竹下隆史・松山公保・荒井透・苅田幸雄, 1994年 株式会社オーム社, URL:[https://www.ohmsha.co.jp/book/9784274068768/](https://www.ohmsha.co.jp/book/9784274068768/)
+* \[2\] D. R. Bhadra, C. A. Joshi, P. R. Soni, N. P. Vyas and R. H. Jhaveri, "Packet loss probability in wireless networks: A survey," 2015 International Conference on Communications and Signal Processing (ICCSP), Melmaruvathur, 2015, pp. 1348-1354, doi: 10.1109/ICCSP.2015.7322729, URL: [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423)
