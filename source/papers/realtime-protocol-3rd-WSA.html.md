@@ -131,5 +131,5 @@ Bhadra ら\[2\]はサーベイの結果，パケット・ロス確率(PLP)に影
 
 ## 参考文献
 
-* \[1\] マスタリングTCP/IP 入門編 第5版　- 竹下隆史・松山公保・荒井透・苅田幸雄, 1994年 株式会社オーム社, URL:[https://www.ohmsha.co.jp/book/9784274068768/](https://www.ohmsha.co.jp/book/9784274068768/)
+* \[1\] 竹下隆史, 松山公保, 荒井透, 苅田幸雄, "マスタリングTCP/IP 入門編", 第5版, オーム社, 1994, URL:[https://www.ohmsha.co.jp/book/9784274068768/](https://www.ohmsha.co.jp/book/9784274068768/)
 * \[2\] D. R. Bhadra, C. A. Joshi, P. R. Soni, N. P. Vyas and R. H. Jhaveri, "Packet loss probability in wireless networks: A survey," 2015 International Conference on Communications and Signal Processing (ICCSP), Melmaruvathur, 2015, pp. 1348-1354, doi: 10.1109/ICCSP.2015.7322729, URL: [http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423](http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7322729&isnumber=7322423)
