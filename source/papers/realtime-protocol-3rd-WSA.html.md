@@ -104,6 +104,23 @@ Bhadra ら\[1\]はサーベイの結果，パケット・ロス確率(PLP)に影
 17. 波長(wave length): 波長変換器の回数が増加するとPLPは減少する??? 25
 18. 親ピアの数(number of parent peers)???: 親ピアが子ピアを適切に選択することによってPLPは減少する。26
 
+また，Bhadra ら\[1\]が調べた論文それぞれが論じているPLPに影響を与えるパラメータとその効果は表1のとおりである。
+
+表1: PLPに影響を与えるパラメータとその効果についての論文
+
+|番号|参照番号|文献名|発行年|著者|ネットワークの種別|パラメータ|PLPへの影響|
+|--:|------:|:----|----:|:--|:-------------|:-------|:---------|
+|1|5|Packet loss probability for real time communication|2002|Kelvin et al.|無線|QoS, パケット到着間隔時刻(packet inter arrival time), パケット・ロス比(fraction of packet loss), パケット遅延(packet delay)|パケット遅延が増加するとPLPは減少する, PLPは遅延したパケットの到達とは独立している|
+|2|6|Analysis of time delay of packet on multi-service system in loop LAN|2009|Cai Qun et al.|LAN|パケット平均到達レート(the mean arriving rate of the packets), 平均提供時間(the mean serving time), 平均時間遅延(the mean time delay)|時間遅延はパケット・ロスを増加させる|
+|3|7|Relationship between packet loss probability and burst parameters for two types of traffic|2012|S. Matsuoka et al.|無線|有音期間(talk spurt), 無音期間(silence period), packet arrival interal, キュー容量(queue capacity), 平均パケットサイズ(average packet size), リンクのバンド幅(bandwidth of the link)|ルーターの負荷が増加するとPLPは増加する|
+|4|8|Packet loss probability estimation with a Kalman filter approach|2006|Dongli Zhang and Dan Ionescu|MPLS VPN|バッファサイズ, パケットサイズ, バンド幅, ピークレート(peak rate)|バッファサイズが増加するとPLPは減少する|
+|5|9|Loss behavior of an Internet router with self-similar input trafiic via Fractal point process|2013|Rajaiah Dasari and Malla Reddy perati|無線|Hurst parameter, Fractal onset time, time scale|Hurst パラメータが増加するとPLPは増加する。フラクタル開始時間(Fractal onset time)???はPLPを減少させる。タイムスケール(time scale)???はPLPを減少させる|
+|6|10|Online packet loss measurement and estimation for VPN based services|2010|Dongli Zhang adn Dang lonescu|VPN|Packet loss, bandwidth|バッファサイズが増加するとPLPが減少する|
+|7|11|Fuild flow model for SCTP traffic over the Internet|2012|Perr Azmatshah and Amir Qayyum|無線|到達レート(arrival rate), 生産性(productivity), depature rate, キュー長, 時間スループット(time throuput)| スループットによってPLPは増加する|
+|8|12|A system of systems approach: a benchmark to WSNs mobility models|2010|Sh. Al-Shukri et al.|WSN|PLP, スループット, ノードの最適バッファサイズ(optimal buffuer size of nodes), エンドツーエンドの遅延 (end-to-end delay), link and path availability|スループットが増加するにつれてPLPは減少する|
+|9|13|Evaluation of PLP in Bluetooth networks|2002|Franco Mazzenga and Dajana Cassioli| MANET| reference receiver, receive power, interference power, thermal noise power|リファレンス・レシーバが中央にあるとPLPが増加し，隅にあるとPLPは減少する。|
+|10|14|PLP for bursty wireless real time traffic through delay model|2004|Kelvin K. Lee and Samuel T. Chason|無線|バンド幅, マージン|LPの値はマージンの値に依存する。マージンが増加したときにPLPはわずかに変化する。|
+
 ## まとめと将来課題
 
 ## 謝辞
