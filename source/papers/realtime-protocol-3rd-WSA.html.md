@@ -119,7 +119,7 @@ Bhadra ら\[2\]はサーベイの結果，パケット・ロス確率(PLP)に影
 |7|11|Fuild flow model for SCTP traffic over the Internet|2012|Perr Azmatshah and Amir Qayyum|無線|到達レート(arrival rate), 生産性(productivity), depature rate, キュー長, 時間スループット(time throuput)| スループットによってPLPは増加する|
 |8|12|A system of systems approach: a benchmark to WSNs mobility models|2010|Sh. Al-Shukri et al.|WSN|PLP, スループット, ノードの最適バッファサイズ(optimal buffuer size of nodes), エンドツーエンドの遅延 (end-to-end delay), link and path availability|スループットが増加するにつれてPLPは減少する|
 |9|13|Evaluation of PLP in Bluetooth networks|2002|Franco Mazzenga and Dajana Cassioli| MANET| reference receiver, receive power, interference power, thermal noise power|リファレンス・レシーバが中央にあるとPLPが増加し，隅にあるとPLPは減少する。|
-|10|14|PLP for bursty wireless real time traffic through delay model|2004|Kelvin K. Lee and Samuel T. Chason|無線|バンド幅, マージン|LPの値はマージンの値に依存する。マージンが増加したときにPLPはわずかに変化する。|
+|10|14|PLP for bursty wireless real time traffic through delay model|2004|Kelvin K. Lee and Samuel T. Chason|無線|バンド幅, マージン|PLPの値はマージンの値に依存する。マージンが増加したときにPLPはわずかに変化する。|
 
 ## まとめと将来課題
 
